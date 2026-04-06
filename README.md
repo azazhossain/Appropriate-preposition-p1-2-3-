@@ -1,1 +1,353 @@
 # Appropriate-preposition-p1-2-3-
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC Appropriate Preposition Exam - (Part-1,2,3)</title>
+    <style>
+        :root {
+            --bg: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #38bdf8;
+            --correct: #10b981;
+            --wrong: #f43f5e;
+            --text: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #030712 80%);
+            color: var(--text);
+            font-family: 'Segoe UI', 'Hind Siliguri', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            align-self: center;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .bar-outer {
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        #bar-inner {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .q-card h2 {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .meaning-alert {
+            display: none;
+            background: rgba(56, 189, 248, 0.15);
+            border-left: 5px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            color: #bae6fd;
+            font-style: italic;
+        }
+
+        .options-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) { .options-wrapper { grid-template-columns: 1fr; } }
+
+        .btn-choice {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            font-size: 1.1rem;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-choice:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--accent); }
+        .btn-choice.correct { background: var(--correct); border-color: var(--correct); font-weight: bold; }
+        .btn-choice.wrong { background: var(--wrong); border-color: var(--wrong); }
+
+        .footer-action { margin-top: 30px; text-align: right; }
+        .btn-main {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+
+        #final-screen { display: none; text-align: center; }
+        .score-circle { font-size: 4rem; color: var(--accent); margin: 30px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="exam-box">
+        <div class="top-nav">
+            <span id="q-counter">Question: 1/127</span>
+            <span id="live-score">Score: 0</span>
+        </div>
+        <div class="bar-outer"><div id="bar-inner"></div></div>
+
+        <div class="q-card">
+            <h2 id="question">Loading...</h2>
+            <div id="meaning" class="meaning-alert"></div>
+            <div class="options-wrapper" id="options"></div>
+        </div>
+
+        <div class="footer-action">
+            <button class="btn-main" id="next-btn" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <div id="final-screen">
+        <h1>পরীক্ষা সম্পন্ন!</h1>
+        <div class="score-circle" id="result-score">0/127</div>
+        <button class="btn-main" style="display:inline-block" onclick="location.reload()">আবার শুরু করুন</button>
+    </div>
+</div>
+
+<script>
+    // 
+    const database = [
+        {q: "I have abhorrence ___ corruption.", a: "of", m: "Abhorrence of - ঘৃণা"},
+        {q: "Hypocrisy is abhorrent ___ honest people.", a: "to", m: "Abhorrent to - ঘৃণ্য"},
+        {q: "You'll have to abide ___ the rules.", a: "by", m: "Abide by - মেনে চলা"},
+        {q: "My brother abides ___ me.", a: "with", m: "Abide with - কারো সাথে থাকা"},
+        {q: "He abides ___ a new building.", a: "in", m: "Abide in - কোনো স্থানে থাকা"},
+        {q: "Rivers abound ___ Bangladesh.", a: "in", m: "Abound in - প্রচুর থাকা"},
+        {q: "The rivers abound ___ fish.", a: "with", m: "Abound with - পূর্ণ থাকা"},
+        {q: "She has been absent ___ school.", a: "from", m: "Absent from - অনুপস্থিত"},
+        {q: "I absolve you ___ all your sins.", a: "from/of", m: "Absolve from/of - পাপমুক্ত করা"},
+        {q: "She seemed totally absorbed ___ her book.", a: "in", m: "Absorbed in - মগ্ন"},
+        {q: "The workers abstained ___ work yesterday.", a: "from", m: "Abstain from - বিরত থাকা"},
+        {q: "He acceded ___ demands for resignation.", a: "to", m: "Accede to - রাজি হওয়া"},
+        {q: "Your offer is not acceptable ___ me.", a: "to", m: "Acceptable to - গ্রহণযোগ্য"},
+        {q: "Students must have access ___ good resources.", a: "to", m: "Access to - প্রবেশাধিকার"},
+        {q: "I can accommodate you ___ a suggestion.", a: "with", m: "Accommodate with - জোগান দেওয়া"},
+        {q: "He was accompanied ___ his father.", a: "by", m: "Accompanied by - কারো সাথে"},
+        {q: "Mr. Jhon is accomplished ___ Mathematics.", a: "in", m: "Accomplished in - দক্ষ"},
+        {q: "His views accord ___ public opinion.", a: "with", m: "Accord with - সামঞ্জস্যপূর্ণ"},
+        {q: "The work was done according ___ her instructions.", a: "to", m: "According to - অনুসারে"},
+        {q: "The weather accounted ___ the small crowd.", a: "for", m: "Account for - কারণ হওয়া"},
+        {q: "He was accused ___ stealing the book.", a: "of", m: "Accused of - অভিযুক্ত"},
+        {q: "My eyes slowly grew accustomed ___ the dark.", a: "to", m: "Accustomed to - অভ্যস্ত"},
+        {q: "The students are acquainted ___ Shakespeare.", a: "with", m: "Acquainted with - পরিচিত"},
+        {q: "The jury acquitted him ___ murder.", a: "of", m: "Acquit of - খালাস দেওয়া"},
+        {q: "We had to adapt quickly ___ the new system.", a: "to", m: "Adapt to - খাপ খাওয়ানো"},
+        {q: "He's addicted ___ computer games.", a: "to", m: "Addicted to - আসক্ত"},
+        {q: "He is adept ___ typing.", a: "in/at", m: "Adept in/at - দক্ষ"},
+        {q: "Future oil supplies be adequate ___ meet needs.", a: "to", m: "Adequate to - পর্যাপ্ত"},
+        {q: "There was oil adhering ___ the feathers.", a: "to", m: "Adhere to - লেগে থাকা"},
+        {q: "Our farm land was adjacent ___ the river.", a: "to", m: "Adjacent to - সংলগ্ন"},
+        {q: "This clause admits ___ no other interpretation.", a: "of", m: "Admit of - অবকাশ রাখা"},
+        {q: "You will not be admitted ___ the theatre.", a: "to/into", m: "Admit to/into - প্রবেশ করানো"},
+        {q: "His affection ___ his motherland amazed me.", a: "for", m: "Affection for - মমতা"},
+        {q: "He is very affectionate ___ his children.", a: "to", m: "Affectionate to - স্নেহশীল"},
+        {q: "I started to feel afraid ___ going out.", a: "of", m: "Afraid of - ভীত"},
+        {q: "He agreed ___ them about the change.", a: "with", m: "Agree with - কারো সাথে একমত হওয়া"},
+        {q: "Do you think he'll agree ___ their proposal?", a: "to", m: "Agree to - প্রস্তাবে রাজি হওয়া"},
+        {q: "These measures are aimed ___ preventing crime.", a: "at", m: "Aim at - লক্ষ্য করা"},
+        {q: "She was alarmed ___ the prospect.", a: "at", m: "Alarmed at - শঙ্কিত"},
+        {q: "How much money has been allotted ___ us?", a: "to", m: "Allot to - বরাদ্দ করা"},
+        {q: "The Emperor kept himself aloof ___ the people.", a: "from", m: "Aloof from - দূরে থাকা"},
+        {q: "This book is alternative ___ that book.", a: "to", m: "Alternative to - বিকল্প"},
+        {q: "He has ambition ___ being a doctor.", a: "for", m: "Ambition for - উচ্চাকাঙ্ক্ষা"},
+        {q: "Donald Trump is ambitious ___ fame.", a: "of", m: "Ambitious of - উচ্চাকাঙ্ক্ষী"},
+        {q: "He seemed most amenable ___ my idea.", a: "to", m: "Amenable to - বাধ্য"},
+        {q: "I was angry ___ myself.", a: "with", m: "Angry with - রাগান্বিত (ব্যক্তি)"},
+        {q: "I was angry ___ the result.", a: "at/about/for", m: "Angry at - রাগান্বিত (বিষয়)"},
+        {q: "He was very annoyed ___ me.", a: "with", m: "Annoyed with - বিরক্ত (ব্যক্তি)"},
+        {q: "You will have to answer ___ your behaviour.", a: "for", m: "Answer for - দায়ী হওয়া"},
+        {q: "I feel a profound antipathy ___ using weapons.", a: "to", m: "Antipathy to - প্রবল বিতৃষ্ণা"},
+        {q: "He seemed anxious ___ the meeting.", a: "about", m: "Anxious about - চিন্তিত"},
+        {q: "Parents are naturally anxious ___ their children.", a: "for", m: "Anxious for - উৎকণ্ঠিত"},
+        {q: "Go and apologize ___ her.", a: "to", m: "Apologize to - ক্ষমা চাওয়া (ব্যক্তি)"},
+        {q: "He apologized ___ canceling our meeting.", a: "for", m: "Apologize for - ক্ষমা চাওয়া (বিষয়)"},
+        {q: "We appeal ___ the government ___ order.", a: "to, for", m: "Appeal to/for - আবেদন করা"},
+        {q: "He appealed ___ the three-match ban.", a: "against", m: "Appeal against - আপিল করা"},
+        {q: "The candidate appeared ___ the board.", a: "before", m: "Appear before - হাজির হওয়া"},
+        {q: "The public have an appetite ___ scandal.", a: "for", m: "Appetite for - ক্ষুধা/স্পৃহা"},
+        {q: "He applied ___ the authority ___ the job.", a: "to, for", m: "Apply to/for - আবেদন করা"},
+        {q: "She has recently been appointed ___ the committee.", a: "to", m: "Appoint to - নিযুক্ত করা"},
+        {q: "I have an appointment ___ my lawyer.", a: "with", m: "Appointment with - সাক্ষাৎকার"},
+        {q: "He had an appointment ___ a blood test.", a: "for", m: "Appointment for - পরীক্ষার সময়"},
+        {q: "I cannot approve ___ her conduct.", a: "of", m: "Approve of - অনুমোদন দেওয়া"},
+        {q: "His aptitude ___ dealing with children.", a: "for", m: "Aptitude for - সহজাত দক্ষতা"},
+        {q: "I don't want to argue ___ you.", a: "with", m: "Argue with - তর্ক করা"},
+        {q: "They argued ___ the right of women.", a: "for", m: "Argue for - পক্ষে যুক্তি দেওয়া"},
+        {q: "They argued ___ voluntary death.", a: "against", m: "Argue against - বিপক্ষে যুক্তি দেওয়া"},
+        {q: "The train arrived ___ the station.", a: "at", m: "Arrive at - পৌঁছানো (ছোট স্থান)"},
+        {q: "She'll arrive ___ New York at noon.", a: "in", m: "Arrive in - পৌঁছানো (বড় শহর)"},
+        {q: "She was deeply ashamed ___ her behaviour.", a: "of", m: "Ashamed of - লজ্জিত"},
+        {q: "Jalal asked ___ a loan.", a: "for", m: "Ask for - চাওয়া"},
+        {q: "She aspired ___ a glorious career.", a: "to", m: "Aspire to - উচ্চাকাঙ্ক্ষা করা"},
+        {q: "The classrooms have been assigned ___ us.", a: "to", m: "Assign to - নির্দিষ্ট করা"},
+        {q: "We will assist you ___ finding somewhere.", a: "in", m: "Assist in - সহায়তা করা"},
+        {q: "He doesn't want to be associated ___ the party.", a: "with", m: "Associate with - যুক্ত হওয়া"},
+        {q: "We assured him ___ our support.", a: "of", m: "Assure of - আশ্বস্ত করা"},
+        {q: "My news astonished everyone ___ at.", a: "at", m: "Astonished at - বিস্মিত"},
+        {q: "He has to atone ___ this crime.", a: "for", m: "Atone for - প্রায়শ্চিত্ত করা"},
+        {q: "Attach the coupon ___ the front.", a: "to", m: "Attach to - জুড়ে দেওয়া"},
+        {q: "I have some urgent business to attend ___.", a: "to", m: "Attend to - মনোনিবেশ করা"},
+        {q: "She attributes her success ___ hard work.", a: "to", m: "Attribute to - কৃতিত্ব দেওয়া"},
+        {q: "Avail themselves ___ the facilities.", a: "of", m: "Avail of - সুযোগ নেওয়া"},
+        {q: "She wasn't averse ___ the idea.", a: "to", m: "Averse to - বিমুখ"},
+        {q: "Everybody should be made aware ___ the risks.", a: "of", m: "Aware of - সচেতন"},
+        {q: "Lack of confidence is a barrier ___ success.", a: "to", m: "Barrier to - বাধা"},
+        {q: "The report is based ___ figures.", a: "on", m: "Based on - ভিত্তি করা"},
+        {q: "They begged him ___ help.", a: "for", m: "Beg for - প্রার্থনা করা"},
+        {q: "Can I beg a favor ___ you?", a: "of/from", m: "Beg favor of - সাহায্য চাওয়া"},
+        {q: "My parents believed ___ me.", a: "in", m: "Believe in - বিশ্বাস করা"},
+        {q: "The islands belong ___ Spain.", a: "to", m: "Belong to - অধিকারে থাকা"},
+        {q: "She seems bent ___ making life difficult.", a: "on", m: "Bent on - সংকল্পবদ্ধ"},
+        {q: "The poor are bereft ___ their basic rights.", a: "of", m: "Bereft of - বঞ্চিত"},
+        {q: "The gifts will be bestowed ___ the guests.", a: "on", m: "Bestow on - দান করা"},
+        {q: "Warned to beware ___ icy roads.", a: "of", m: "Beware of - সতর্ক থাকা"},
+        {q: "Police are blaming the accident ___ driving.", a: "on", m: "Blame on - দোষারোপ করা"},
+        {q: "He is blessed ___ his children.", a: "in", m: "Blessed in - সুখী হওয়া"},
+        {q: "She was blessed ___ a child.", a: "with", m: "Blessed with - আশীর্বাদপ্রাপ্ত"},
+        {q: "She is blind ___ her husband's faults.", a: "to", m: "Blind to - দেখেও না দেখা (দোষ)"},
+        {q: "The man is blind ___ one eye.", a: "of/in", m: "Blind of/in - অন্ধ"},
+        {q: "He blushed ___ shame.", a: "with", m: "Blush with - লজ্জায় লাল হওয়া"},
+        {q: "He openly boasted ___ his skill.", a: "of", m: "Boast of - দম্ভ করা"},
+        {q: "He was born ___ German parents.", a: "of/to", m: "Born of/to - জন্মগ্রহণ করা"},
+        {q: "This plane is bound ___ New York.", a: "for", m: "Bound for - গন্তব্যমুখী"},
+        {q: "He was brought ___ by his aunt.", a: "up", m: "Bring up - লালন-পালন করা"},
+        {q: "Are you still brooding ___ what he said?", a: "on/over", m: "Brood on/over - বিষণ্ণভাবে ভাবা"},
+        {q: "She burst ___ tears.", a: "into", m: "Burst into - কান্নায় ভেঙে পড়া"},
+        {q: "He burst ___ laughing.", a: "out", m: "Burst out - হাসিতে ফেটে পড়া"},
+        {q: "He is now busy ___ his new work.", a: "with", m: "Busy with - ব্যস্ত"},
+        {q: "He was callous ___ his family.", a: "to", m: "Callous to - উদাসীন"},
+        {q: "You are capable ___ better work.", a: "of", m: "Capable of - সক্ষম"},
+        {q: "She has an enormous capacity ___ hard work.", a: "for", m: "Capacity for - ক্ষমতা/যোগ্যতা"},
+        {q: "He does not care ___ what will happen.", a: "about", m: "Care about - চিন্তিত হওয়া"},
+        {q: "She moved back home to care ___ her parents.", a: "for", m: "Care for - যত্ন নেওয়া"},
+        {q: "Be careful ___ the traffic.", a: "of/about", m: "Careful of - সতর্ক"},
+        {q: "There is no cause ___ concern.", a: "for", m: "Cause for - কারণ (উদ্বেগের)"},
+        {q: "If you want to be certain ___ getting a ticket.", a: "of/about", m: "Certain of - নিশ্চিত"},
+        {q: "Charged the minister ___ neglecting duty.", a: "with", m: "Charge with - অভিযুক্ত করা"},
+        {q: "Theft was charged ___ him.", a: "against/on", m: "Charge against - অভিযোগ আনা (কারো বিরুদ্ধে)"},
+        {q: "The bank is close ___ the office.", a: "to", m: "Close to - নিকটবর্তী"},
+        {q: "Vital clues ___ the identity.", a: "to", m: "Clue to - সূত্র"},
+        {q: "Strike coincided ___ the conference.", a: "with", m: "Coincide with - একই সময়ে ঘটা"},
+        {q: "He comes ___ a respectable family.", a: "of", m: "Come of - বংশোদ্ভূত হওয়া"},
+        {q: "The day commenced ___ a welcome.", a: "with", m: "Commence with - শুরু হওয়া"},
+        {q: "I don't feel I can comment ___ their decision.", a: "on", m: "Comment on - মন্তব্য করা"},
+        {q: "Bangladesh is committed ___ peaceful existence.", a: "to", m: "Commit to - অঙ্গীকারবদ্ধ"},
+        {q: "Knowledge can be compared ___ light.", a: "to", m: "Compare to - তুলনা করা (ভিন্ন জাতীয়)"},
+        {q: "Nazrul can be compared ___ Shelly.", a: "with", m: "Compare with - তুলনা করা (সমজাতীয়)"}
+    ];
+
+    let current = 0;
+    let score = 0;
+    let locked = false;
+
+    function loadQuestion() {
+        locked = false;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('meaning').style.display = 'none';
+        
+        const data = database[current];
+        document.getElementById('q-counter').innerText = `Question: ${current + 1}/${database.length}`;
+        document.getElementById('bar-inner').style.width = `${((current + 1) / database.length) * 100}%`;
+        document.getElementById('question').innerText = data.q;
+        
+        const allOpts = ["of", "to", "with", "for", "in", "at", "from", "on", "into", "against", "by", "up", "about", "of/in", "of/to", "on/over", "to, for", "to/into", "at/about/for", "against/on", "of/about", "from/of"];
+        let options = [data.a];
+        while(options.length < 4) {
+            let r = allOpts[Math.floor(Math.random() * allOpts.length)];
+            if(!options.includes(r)) options.push(r);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        const wrapper = document.getElementById('options');
+        wrapper.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-choice';
+            btn.innerText = opt;
+            btn.onclick = () => verify(btn, opt);
+            wrapper.appendChild(btn);
+        });
+    }
+
+    function verify(btn, val) {
+        if(locked) return;
+        locked = true;
+        const correct = database[current].a;
+        const mText = database[current].m;
+        
+        const mBox = document.getElementById('meaning');
+        mBox.innerText = `সঠিক উত্তর: ${correct} (${mText})`;
+        mBox.style.display = 'block';
+
+        if(val === correct) {
+            btn.classList.add('correct');
+            score++;
+            document.getElementById('live-score').innerText = `Score: ${score}`;
+        } else {
+            btn.classList.add('wrong');
+            Array.from(document.querySelectorAll('.btn-choice')).forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct');
+            });
+        }
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        current++;
+        if(current < database.length) {
+            loadQuestion();
+        } else {
+            document.getElementById('exam-box').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+            document.getElementById('result-score').innerText = `${score}/${database.length}`;
+        }
+    }
+
+    loadQuestion();
+</script>
+</body>
+</html>
